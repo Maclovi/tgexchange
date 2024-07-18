@@ -34,8 +34,8 @@ docker-compose up -d
 ## Example
 
 1. Send the `/start` command to see the welcome message and instructions.
-2. Send `/rates` command to see the rates.
-3. Send `/exchange usd rub 10` command to see conversion
+2. Send the `/rates` command to see the rates.
+3. Send the `/exchange usd rub 10` command to see conversion
 ## Contributing
 
 Contributions are welcome! Here's how you can help:
