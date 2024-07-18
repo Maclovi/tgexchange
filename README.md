@@ -16,17 +16,9 @@ Clone the repository to your local machine:
 git clone https://github.com/Maclovi/tgexchange.git 
 cd tgexchange
 ```
-### Dependencies
-
-Install the required Python libraries:
-
-```bash
-pip install .
-```
 ### How to start
 1. Rename .env.example to .env
 2. Fill out the TOKEN
-
 ## Usage
 
 Run the bot:
