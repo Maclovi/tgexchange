@@ -29,7 +29,7 @@ docker-compose up -d
 
 - **/start** - Display a welcome message and usage instructions.
 - **/rates** - Display all current rates
-- **/exchange - Takes 2 currencies and amount
+- **/exchange** - Takes 2 currencies and amount
 
 ## Example
 
