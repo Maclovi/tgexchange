@@ -3,6 +3,6 @@
 .mypy_cache/
 build/
 
-venv/
 scripts/env.sh
+.venv/
 .env

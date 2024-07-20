@@ -4,9 +4,11 @@ import sys
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
+from aiohttp import ClientSession
 
 from exchange.bot.handlers import user
 from exchange.config import load_config
+from exchange.ioc import Ioc
 
 logger = logging.getLogger(__name__)
 
@@ -17,18 +19,21 @@ async def tgbot_main() -> None:
     level = logging.DEBUG if conf.tg_bot.debug else logging.INFO
     logging.basicConfig(level=level, stream=sys.stdout)
 
+    session = ClientSession()
     storage = RedisStorage.from_url(conf.redis.get_uri())
-    await storage.redis.ping()
+
+    ioc: Ioc = Ioc(session=session, redis=storage.redis)
 
     bot = Bot(token=conf.tg_bot.token)
-    dp = Dispatcher(storage=storage, storage2=storage)
+    dp = Dispatcher(storage=storage, ioc=ioc)
     dp.include_router(user.router)
 
     try:
+        await storage.redis.ping()
         await dp.start_polling(bot)
     finally:
-        await dp.storage.close()
-        await bot.session.close()
+        await ioc.session.close()
+        await ioc.redis.aclose()  # type: ignore
 
 
 def cli() -> None:

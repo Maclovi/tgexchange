@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ElemTree
-from collections.abc import AsyncIterator
+from collections.abc import Iterator
+from decimal import Decimal
 from functools import partial
 from typing import cast
 
-from exchange.domain.entity import Currency, DecimalStr
-from exchange.helpers import get_raw_response
+from exchange.domain.entity import Currency
 
 
 def get_text_by_node(node: ElemTree.Element, path: str, /) -> str:
@@ -12,8 +12,11 @@ def get_text_by_node(node: ElemTree.Element, path: str, /) -> str:
     return str(element.text)
 
 
-async def iter_xmldata() -> AsyncIterator[Currency | str]:
-    xml_raw = await get_raw_response("https://cbr.ru/scripts/XML_daily.asp")
+def to_decimal(num: str) -> Decimal:
+    return Decimal(num.replace(",", ".", 1))
+
+
+def parse_xml(xml_raw: bytes) -> Iterator[Currency | str]:
     tree = ElemTree.fromstring(xml_raw)
 
     today = tree.get("Date")
@@ -25,19 +28,19 @@ async def iter_xmldata() -> AsyncIterator[Currency | str]:
         char_code="RUB",
         nominal=1,
         name="Российский рубль",
-        value=DecimalStr(1),
-        vunit_rate=DecimalStr(1),
+        value=Decimal(1),
+        vunit_rate=Decimal(1),
     )
 
     for node in tree.iter("Valute"):
-        by_node = partial(get_text_by_node, node)
+        text_by_node = partial(get_text_by_node, node)
 
         yield Currency(
             id=node.get("ID", "no id"),
-            code=int(by_node("NumCode")),
-            char_code=by_node("CharCode"),
-            nominal=int(by_node("Nominal")),
-            name=by_node("Name"),
-            value=DecimalStr(by_node("Value")),
-            vunit_rate=DecimalStr(by_node("VunitRate")),
+            code=int(text_by_node("NumCode")),
+            char_code=text_by_node("CharCode"),
+            nominal=int(text_by_node("Nominal")),
+            name=text_by_node("Name"),
+            value=to_decimal(text_by_node("Value")),
+            vunit_rate=to_decimal(text_by_node("VunitRate")),
         )

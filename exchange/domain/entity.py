@@ -1,39 +1,10 @@
 import itertools
-import json
 from collections.abc import Iterable, Iterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Self, TypeAlias
+from typing import TypeAlias
 
 CharCode: TypeAlias = str
-Serialized: TypeAlias = str | bytes | bytearray
-
-
-class CurrencyEncoder(json.JSONEncoder):
-    def default(self, o: Any) -> Any:
-        if isinstance(o, Currency):
-            return o.__dict__
-        return super().default(o)
-
-
-class DecimalStr(str):
-    def __new__(cls, val: Any) -> Self:
-        return super().__new__(cls, val)
-
-    def __init__(self, val: Any) -> None:
-        super().__init__()
-        val = val.replace(",", ".", 1) if isinstance(val, str) else val
-        self.dec = Decimal(val)
-
-    def __mul__(self, other: Any, /) -> Self:
-        if not isinstance(other, type(self)):
-            other = self.__class__(other)
-        return self.__class__(self.dec * other.dec)
-
-    def __truediv__(self, other: Any, /) -> Self:
-        if not isinstance(other, type(self)):
-            other = self.__class__(other)
-        return self.__class__(self.dec / other.dec)
 
 
 @dataclass(slots=True, frozen=True)
@@ -43,31 +14,22 @@ class Currency:
     char_code: CharCode
     nominal: int
     name: str
-    value: DecimalStr
-    vunit_rate: DecimalStr
-
-    def __eq__(self, other: object, /) -> bool:
-        if not isinstance(other, type(self)):
-            raise TypeError("value should be itself")
-
-        return self.char_code == other.char_code
-
-    def __hash__(self) -> int:
-        return hash(self.char_code)
+    value: Decimal
+    vunit_rate: Decimal
 
     def __str__(self) -> str:
-        prep = f"{self.value.dec:.2f}"
+        prep = f"{self.value:.2f}"
         return f"{self.char_code:4}{prep:>6} RUB"
 
-    def __mul__(self, other: object, /) -> DecimalStr:
+    def __mul__(self, other: object, /) -> Decimal:
         if not isinstance(other, type(self)):
-            raise TypeError("value should be itself")
+            raise TypeError(f"value should be {self.__class__.__name__}")
 
         return self.value * other.value
 
-    def __truediv__(self, other: object, /) -> DecimalStr:
+    def __truediv__(self, other: object, /) -> Decimal:
         if not isinstance(other, type(self)):
-            raise TypeError("value should be itself")
+            raise TypeError(f"value should be {self.__class__.__name__}")
 
         return self.value / other.value
 
@@ -76,12 +38,13 @@ class Currency:
 class CurrenciesBank:
     today: str
     _repository: dict[CharCode, Currency]
-    _rates: str = field(init=False, default="")
+    _rates: str = ""
 
     def __post_init__(self) -> None:
-        rates = sorted(self, key=lambda cur: cur.value.dec)
-        formatted = self._formatting(rates)
-        self._rates = f"<b>{self.today}</b>\n\n<code>{formatted}</code>"
+        if not self._rates:
+            rates = sorted(self, key=lambda cur: cur.value, reverse=True)
+            formatted = self._formatting(rates)
+            self._rates = f"<b>{self.today}</b>\n\n<code>{formatted}</code>"
 
     def __getitem__(self, item: object) -> Currency:
         if not isinstance(item, str):
@@ -109,16 +72,9 @@ class CurrenciesBank:
     def get(self, item: str) -> Currency | None:
         return self._repository.get(item)
 
-    def convert(self, cur1: str, cur2: str) -> DecimalStr:
+    def convert(self, cur1: str, cur2: str) -> Decimal:
         convert = self[cur1] / self[cur2]
         return convert
 
-    def exchange(self, cur1: str, cur2: str, amount: str) -> DecimalStr:
-        return self.convert(cur1, cur2) * amount
-
-    def to_json(self) -> Serialized:
-        return json.dumps(self.__dict__, cls=CurrencyEncoder)
-
-    @classmethod
-    def from_json(cls, s: Serialized) -> Self:
-        return cls(**json.loads(s, parse_float=Decimal))
+    def exchange(self, cur1: str, cur2: str, amount: str) -> Decimal:
+        return self.convert(cur1, cur2) * Decimal(amount)

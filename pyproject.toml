@@ -41,6 +41,13 @@ Documentation = "https://github.com/Maclovi/tgexchange/blob/main/README.md"
 ignore_missing_imports = true
 strict = true
 pretty = true
+allow_subclassing_any = true
+allow_untyped_calls = true
+show_error_codes = true
+implicit_reexport = true
+warn_unused_ignores = false
+allow_untyped_decorators = true
+namespace_packages = true
 
 [tool.isort]
 profile = "black"
