@@ -35,7 +35,7 @@ async def currency_convert(message: Message, bank: "Bank") -> None:
     _, *args = txt.upper().split()
 
     if not args or len(args) != 3:
-        await message.answer("Заебал хуйнёй страдать, передай 2 аргумента")
+        await message.answer("Заебал хуйнёй страдать, передай 3 аргумента")
     elif not (args[0] in bank and args[1] in bank):
         await message.answer("Нет такой валюты уебан")
     elif not args[-1].isdigit():
@@ -47,12 +47,13 @@ async def currency_convert(message: Message, bank: "Bank") -> None:
         conv2 = bank.convert(cur2, cur1)
 
         resp = textwrap.dedent(f"""\
-            <b>{bank.today}
+            <b>{bank.today}</b>
 
-            {amount} {cur1} to {cur2}</b>
-            <i>1 {cur1} = {conv1:.2f} {cur2}
-            1 {cur2} = {conv2:.2f} {cur1}</i>
-            <b>{amount} {cur1} = {cur2} {exch:.2f}</b>
+            <code>1 {cur1} = {conv1.dec:>5.2f} {cur2}
+            1 {cur2} = {conv2.dec:>5.2f} {cur1}</code>
+
+            <b>{amount} {cur1} to {cur2}
+            {amount} {cur1} = {exch.dec:.2f} {cur2}</b>
         """)
 
         await message.answer(resp, parse_mode="HTML")

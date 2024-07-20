@@ -5,8 +5,9 @@
 
 ### Requirements
 
-- Python 3.10 or higher
+- Python 3.11 or higher
 - Redis 7 or higher
+- Docker & Docker-compose latest
 - Telegram bot token (from [BotFather](https://t.me/botfather))
 ### Cloning the Repository
 
@@ -56,4 +57,4 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 ---
 
-For any questions or issues, please open an issue on the [GitHub repository](https://github.com/Maclovi/tgloader/issues).
+For any questions or issues, please open an issue on the [GitHub repository](https://github.com/Maclovi/tgexchange/issues).

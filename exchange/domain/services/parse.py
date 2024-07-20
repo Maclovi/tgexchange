@@ -3,8 +3,8 @@ from collections.abc import AsyncIterator
 from functools import partial
 from typing import cast
 
-from exchange.domain.entity import Currency
-from exchange.helpers import get_raw_response, to_decimal
+from exchange.domain.entity import Currency, DecimalStr
+from exchange.helpers import get_raw_response
 
 
 def get_text_by_node(node: ElemTree.Element, path: str, /) -> str:
@@ -25,8 +25,8 @@ async def iter_xmldata() -> AsyncIterator[Currency | str]:
         char_code="RUB",
         nominal=1,
         name="Российский рубль",
-        value=to_decimal("1"),
-        vunit_rate=to_decimal("1"),
+        value=DecimalStr(1),
+        vunit_rate=DecimalStr(1),
     )
 
     for node in tree.iter("Valute"):
@@ -38,6 +38,6 @@ async def iter_xmldata() -> AsyncIterator[Currency | str]:
             char_code=by_node("CharCode"),
             nominal=int(by_node("Nominal")),
             name=by_node("Name"),
-            value=to_decimal(by_node("Value")),
-            vunit_rate=to_decimal(by_node("VunitRate")),
+            value=DecimalStr(by_node("Value")),
+            vunit_rate=DecimalStr(by_node("VunitRate")),
         )

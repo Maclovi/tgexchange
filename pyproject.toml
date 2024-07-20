@@ -33,9 +33,9 @@ dependencies = [
 ]
 
 [project.urls]
-# Repository = ""
-# Homepage = ""
-# Documentation = ""
+Homepage = "https://github.com/Maclovi/tgexchange"
+Repository = "https://github.com/Maclovi/tgexchange"
+Documentation = "https://github.com/Maclovi/tgexchange/blob/main/README.md"
 
 [tool.mypy]
 ignore_missing_imports = true
