@@ -3,7 +3,6 @@ import textwrap
 from typing import TYPE_CHECKING, cast
 
 from aiogram import Router
-from aiogram.filters import CommandStart
 from aiogram.types import ChatMemberUpdated, Message
 
 from ..filters.user import (
@@ -11,6 +10,7 @@ from ..filters.user import (
     IF_MEMBER,
     ChatIsPrivate,
     CommandForCurrency,
+    CommandStart,
 )
 
 if TYPE_CHECKING:
@@ -47,11 +47,12 @@ async def currency_convert(message: Message, bank: "Bank") -> None:
         conv2 = bank.convert(cur2, cur1)
 
         resp = textwrap.dedent(f"""\
-            {bank.today}
+            <b>{bank.today}
 
-            <b>{amount} {cur1} to {cur2}</b>
-            1 {cur1} = {conv1:.2f} {cur2}   1 {cur2} = {conv2:.2f} {cur1}
-            {amount} {cur1} = {cur2} {exch:.2f}
+            {amount} {cur1} to {cur2}</b>
+            <i>1 {cur1} = {conv1:.2f} {cur2}
+            1 {cur2} = {conv2:.2f} {cur1}</i>
+            <b>{amount} {cur1} = {cur2} {exch:.2f}</b>
         """)
 
         await message.answer(resp, parse_mode="HTML")

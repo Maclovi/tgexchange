@@ -20,13 +20,13 @@ async def iter_xmldata() -> AsyncIterator[Currency | str]:
     yield f"Central Bank rate on {today}"
 
     yield Currency(
-        "RAKETAHAXYI",
-        643,
-        "RUB",
-        1,
-        "Российский рубль",
-        to_decimal("1"),
-        to_decimal("1"),
+        id="RAKETAHAXYI",
+        code=643,
+        char_code="RUB",
+        nominal=1,
+        name="Российский рубль",
+        value=to_decimal("1"),
+        vunit_rate=to_decimal("1"),
     )
 
     for node in tree.iter("Valute"):

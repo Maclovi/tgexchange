@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from functools import lru_cache
 from os import environ
 
 
@@ -26,7 +25,6 @@ class Config:
     redis: RedisConf
 
 
-@lru_cache
 def load_config() -> Config:
     return Config(
         tg_bot=TgBot(
