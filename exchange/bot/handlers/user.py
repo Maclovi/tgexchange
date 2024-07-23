@@ -76,7 +76,8 @@ async def get_info(message: Message, bank: "Bank") -> None:
     _, *args = cast(str, message.text).upper().split()
     if not args:
         await message.answer(
-            "Нужно передать валюту\nПpимep:\n<code>/info USD</code>"
+            "Нужно передать валюту\nПpимep:\n<code>/info USD</code>",
+            parse_mode="HTML",
         )
     elif currency := bank.get(args[0]):
         await message.answer(currency.info, parse_mode="HTML")
