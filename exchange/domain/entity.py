@@ -1,6 +1,7 @@
 import itertools
+import textwrap
 from collections.abc import Iterable, Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import TypeAlias
 
@@ -16,6 +17,18 @@ class Currency:
     name: str
     value: Decimal
     vunit_rate: Decimal
+
+    @property
+    def info(self) -> str:
+        return textwrap.dedent(f"""\
+            Id: {self.id}
+            Code: {self.code}
+            Char code: {self.char_code}
+            Nominal: {self.nominal}
+            Name: {self.name}
+            Value: {self.value}
+            Vunit rate: {self.vunit_rate}
+        """)
 
     def __str__(self) -> str:
         prep = f"{self.value:.2f}"
@@ -38,13 +51,12 @@ class Currency:
 class CurrenciesBank:
     today: str
     _repository: dict[CharCode, Currency]
-    _rates: str = ""
+    _rates: str = field(init=False, default="")
 
     def __post_init__(self) -> None:
-        if not self._rates:
-            rates = sorted(self, key=lambda cur: cur.value, reverse=True)
-            formatted = self._formatting(rates)
-            self._rates = f"<b>{self.today}</b>\n\n<code>{formatted}</code>"
+        rates = sorted(self, key=lambda cur: cur.value, reverse=True)
+        formatted = self._formatting(rates)
+        self._rates = f"<b>{self.today}</b>\n\n<code>{formatted}</code>"
 
     def __getitem__(self, item: object) -> Currency:
         if not isinstance(item, str):

@@ -31,8 +31,7 @@ async def proccess_cmd_start(message: Message) -> None:
 
 @router.message(CommandForCurrency("/exchange"))
 async def currency_convert(message: Message, bank: "Bank") -> None:
-    txt = cast(str, message.text)
-    _, *args = txt.upper().split()
+    _, *args = cast(str, message.text).upper().split()
 
     if not args or len(args) != 3:
         await message.answer(
@@ -70,6 +69,19 @@ async def currency_convert(message: Message, bank: "Bank") -> None:
 @router.message(CommandForCurrency("/rates"))
 async def get_rates(message: Message, bank: "Bank") -> None:
     await message.answer(bank.rates, parse_mode="HTML")
+
+
+@router.message(CommandForCurrency("/info"))
+async def get_info(message: Message, bank: "Bank") -> None:
+    _, *args = cast(str, message.text).upper().split()
+    if not args:
+        await message.answer(
+            "Нужно передать валюту\nПpимep:\n<code>/info USD</code>"
+        )
+    elif currency := bank.get(args[0]):
+        await message.answer(currency.info, parse_mode="HTML")
+    else:
+        await message.answer("Нет такой валюты уебан")
 
 
 @router.my_chat_member(IF_KICKED)
