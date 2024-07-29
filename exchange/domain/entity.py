@@ -3,6 +3,7 @@ import textwrap
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from decimal import Decimal
+from functools import cached_property
 from typing import TypeAlias
 
 CharCode: TypeAlias = str
@@ -18,16 +19,16 @@ class Currency:
     value: Decimal
     vunit_rate: Decimal
 
-    @property
+    @cached_property
     def info(self) -> str:
         return textwrap.dedent(f"""\
-            Id: {self.id}
-            Code: {self.code}
-            Char code: {self.char_code}
-            Nominal: {self.nominal}
-            Name: {self.name}
-            Value: {self.value}
-            Vunit rate: {self.vunit_rate}
+            <b>Id:</b> {self.id}
+            <b>Code:</b> {self.code}
+            <b>Char code:</b> {self.char_code}
+            <b>Nominal:</b> {self.nominal}
+            <b>Name:</b> {self.name}
+            <b>Value:</b> {self.value}
+            <b>Vunit rate:</b> {self.vunit_rate}
         """)
 
     def __str__(self) -> str:

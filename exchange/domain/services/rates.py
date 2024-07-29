@@ -20,31 +20,22 @@ class Rates:
         self.ioc = ioc
         self.key = "bank"
         self.url = "https://cbr.ru/scripts/XML_daily.asp"
+        self.expire = 86_000
 
     async def get_url_xml(self, url: str) -> bytes:
         logger.info("Xml returned from url")
         resp = await self.ioc.session.get(url)
         return cast(bytes, await resp.read())
 
-    async def get_redis_xml(self, key: str) -> bytes | None:
-        return await self.ioc.redis.get(key)
-
-    async def set_redis_xml(self, key: str, xml: bytes) -> bool:
-        await self.ioc.redis.set(key, xml, ex=86_000)
-        return True
-
-    async def key_exists(self, key: str) -> bool:
-        return bool(await self.ioc.redis.exists(key))
-
     async def get_xml(self) -> bytes:
-        if xml := await self.get_redis_xml(self.key):
+        if xml := await self.ioc.redis.get(self.key):
             logger.info("Xml returned from redis")
-            return xml
+            return cast(bytes, xml)
 
         xml = await self.get_url_xml(self.url)
 
         logger.info("Write the xml to redis cache")
-        await self.set_redis_xml(self.key, xml)
+        await self.ioc.redis.set(self.key, xml, ex=self.expire)
 
         return xml
 
@@ -59,7 +50,7 @@ class Rates:
         return CurrenciesBank(today, {xml.char_code: xml for xml in currencies})
 
     async def get_bank(self) -> CurrenciesBank:
-        if (bank := self.ioc.bank) and await self.key_exists(self.key):
+        if (bank := self.ioc.bank) and await self.ioc.redis.exists(self.key):
             logger.info("Bank returned from python object")
             return bank
 
