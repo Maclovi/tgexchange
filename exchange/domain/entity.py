@@ -25,7 +25,7 @@ class Currency:
             return self._info
 
         self._info = textwrap.dedent(f"""\
-            <b>Id:</b> {self.id} kakasobaki
+            <b>Id:</b> {self.id}
             <b>Code:</b> {self.code}
             <b>Char code:</b> {self.char_code}
             <b>Nominal:</b> {self.nominal}
