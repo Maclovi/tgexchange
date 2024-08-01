@@ -18,7 +18,7 @@ COPY ./pyproject.toml .
 RUN /root/.cargo/bin/uv venv /home/packages/.venv
 RUN /root/.cargo/bin/uv pip install --no-cache --only-deps=.
 
-FROM build as final
+FROM build
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     PATH="/home/packages/.venv/bin:$PATH" \
