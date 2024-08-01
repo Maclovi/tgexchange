@@ -10,7 +10,7 @@ RUN apt-get update &&\
 
 COPY ./pyproject.toml .
 RUN /root/.cargo/bin/uv venv /home/packages/.venv
-RUN /root/.cargo/bin/uv pip install --no-cache --only-deps=:requested: .
+RUN /root/.cargo/bin/uv pip install --no-cache .
 
 FROM build
 
