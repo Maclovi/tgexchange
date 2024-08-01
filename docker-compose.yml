@@ -2,6 +2,7 @@ services:
   bot:
     build: .
     container_name: bot
+    command: python3.12 exchange/cli.py
     env_file: .env
     depends_on:
       - redis
