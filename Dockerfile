@@ -1,4 +1,3 @@
-# Build image to compile all packages
 from python:3.12.4-slim as build
 
 ENV VIRTUAL_ENV=/home/packages/.venv
@@ -11,12 +10,11 @@ RUN apt-get update &&\
 
 COPY ./pyproject.toml .
 RUN /root/.cargo/bin/uv venv /home/packages/.venv
-RUN /root/.cargo/bin/uv pip install --no-cache --only-deps=.
+RUN /root/.cargo/bin/uv pip install --no-cache --only-deps=:requested: .
 
 FROM build
 
-ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    PATH="/home/packages/.venv/bin:$PATH" \
+ENV PATH="/home/packages/.venv/bin:$PATH" \
     VIRTUAL_ENV=/home/packages/.venv \
     PYTHONPATH="/home/app:$PYTHONPATH"
 
