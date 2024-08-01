@@ -3,7 +3,7 @@ from python:3.12.4-slim as build
 
 ENV VIRTUAL_ENV=/home/packages/.venv
 ADD https://astral.sh/uv/install.sh /install.sh
-RUN apk-get add --no-cache curl && \
+RUN apt-get install --no-cache curl && \
     chmod -R 655 /install.sh && /install.sh && rm /install.sh
 
 COPY ./pyproject.toml .
