@@ -7,3 +7,5 @@ RUN pip install uv && uv pip install --no-cache --system .
 
 COPY ./exchange ./.env ./
 RUN uv pip install --no-cache --system -e .
+
+CMD ["startbot"]
