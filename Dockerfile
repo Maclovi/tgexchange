@@ -7,5 +7,5 @@ RUN pip install uv
 COPY pyproject.toml .
 RUN uv pip install --no-cache --system .
 
-COPY ./exchange ./.env .
+COPY ./exchange ./.env ./
 RUN uv pip install --no-cache --system -e .
